@@ -32,12 +32,18 @@ rotate([90,0,90]) {
     }
 }
 
-jointWidth = 5; // The width of the joint part
-jointSides = 10; // The length and height for the joint part
+// Todo: This will break if position of the base part is changed
+// jointWidth is the thicknes of the joint part
+// jointSides is the length of the joint part sides its a cube basically
+module jointPart(jointWidth = 5, jointSides = 10) {
 
-jointZPos = - (baseSquare/2);
+jointXPos = cylinderLength - jointSides;
+jointZPos = - (baseSquare/2) - jointSides;
 
 jointYPos = -  (jointSides - jointWidth/2);
 
-translate([cylinderLength, jointYPos, jointZPos])
+translate([jointXPos, jointYPos, jointZPos])
     color("green") cube([jointSides,jointWidth,jointSides]);
+}
+
+jointPart();
