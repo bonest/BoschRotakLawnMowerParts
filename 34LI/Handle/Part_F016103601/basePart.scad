@@ -31,3 +31,13 @@ rotate([90,0,90]) {
         
     }
 }
+
+jointWidth = 5; // The width of the joint part
+jointSides = 10; // The length and height for the joint part
+
+jointZPos = - (baseSquare/2);
+
+jointYPos = -  (jointSides - jointWidth/2);
+
+translate([cylinderLength, jointYPos, jointZPos])
+    color("green") cube([jointSides,jointWidth,jointSides]);
