@@ -26,11 +26,10 @@ module mainPart(isLeft = true)
         // The outer base part
         mountBasePart(isLeft = isLeft);
 
-        %union() 
+        union() 
         {
-            // Inner handle pole
-        translate( [baseMountLength / 2, 0, baseMountWidth / 2] ) 
-        rotate([-90,0,0]) handlePole();    
+        
+        
 
         // The hinge part
         hingePart(partWidth = 10, thicknes = jointPartWidth);
@@ -44,7 +43,25 @@ module mainPart(isLeft = true)
 
 module mountBasePart(isLeft = true) {
     
-    %difference() {
+    if (isLeft)
+    {
+        mountBase();
+
+        mountRims();
+    }
+    else {  
+        difference() {
+            mountBase();
+            mountRims(isCutOut = true);
+        }
+        
+    }
+    
+}
+
+module mountBase() 
+{
+    difference() {
         // Outer cube
         cube([baseMountLength ,baseMountPartWidth, baseMountWidth]);
         
@@ -54,7 +71,27 @@ module mountBasePart(isLeft = true) {
         cylinder(h =baseMountLength, r = mowerHandleRadius);
     }
 
-    mountRimJoiner(length = baseMountLength - 4);
+    // Inner handle pole
+    translate( [baseMountLength / 2, 0, baseMountWidth / 2] ) 
+    rotate([-90,0,0]) handlePole();    
+}
+
+module mountRims(isCutOut = false)
+{
+    rimJoinPadding = isCutOut ? 4 : 6;
+    rimJoinLength = baseMountLength - rimJoinPadding;
+
+    rimJoinDepth  = 2;
+
+    rimJoinPos_X = (baseMountLength - rimJoinLength) / 2;
+    rimJoinPos_Y = (baseMountWidth - rimJoinDepth) / 2;
+    rimJoinPos_Z = (baseMountPartWidth - (mowerHandleRadius*2)) / 4;
+
+    // lover rim
+    
+    translate([rimJoinPos_X, rimJoinPos_Y,-rimJoinPos_Z]) mountRimJoiner(length = rimJoinLength, depth = rimJoinDepth);
+    // upuper rim 
+    translate([rimJoinPos_X, rimJoinPos_Y,baseMountWidth + rimJoinPos_Z + 0.25]) mountRimJoiner(length = rimJoinLength, depth = rimJoinDepth);
 }
 
 // small cylinders that can be either added or cutout or added to the base rim 
@@ -95,9 +132,4 @@ module handlePole(screwThicknes = 4.9)
     
 }
 
-mainPart();
-//handlePole();
-//mountPart();
-//jointPart(partWidth = 10, thicknes = jointPartWidth);
-
-//color("blue") jointPart(partWidth = 10, thicknes = 2);
+mainPart(isLeft = false);
