@@ -20,15 +20,18 @@ cylinderPoleLength = baseMountPartWidth; //Length of th connecting pole
 
 jointPartWidth = baseMountWidth / 3;
 
-module mainPart(isLeft = true)
-{
+// TODO: Male = the left part
+// TODO: screw / bolt cutout on base part
+// TODO: Screw / bold cutout on hinge
 
-        // The outer base part
-        mountBasePart(isLeft = isLeft);
 
+// combines basepart and hinge part to the main part. 
+module mainPart(isMale = true)
+{        
         union() 
         {
-        
+        // The outer base part
+        mountBasePart(isLeft = isLeft);
         
 
         // The hinge part
@@ -41,17 +44,21 @@ module mainPart(isLeft = true)
     
 }
 
-module mountBasePart(isLeft = true) {
+// Returns the main base part without the hinge
+module mountBasePart(isMale = true) {
     
-    if (isLeft)
+    if (isMale)
     {
-        mountBase();
 
+        mountBase(isMale);
+
+        // Bar rim (sticking out)
         mountRims();
     }
     else {  
         difference() {
-            mountBase();
+            mountBase(isMale);
+            // The bar rim cutout on the right part. 
             mountRims(isCutOut = true);
         }
         
@@ -59,7 +66,8 @@ module mountBasePart(isLeft = true) {
     
 }
 
-module mountBase() 
+// Creates the base part with the joining pole
+module mountBase(isMale = true) 
 {
     difference() {
         // Outer cube
@@ -74,6 +82,12 @@ module mountBase()
     // Inner handle pole
     translate( [baseMountLength / 2, 0, baseMountWidth / 2] ) 
     rotate([-90,0,0]) handlePole();    
+
+    // Add the screw cutout
+    if (isMale)
+    {
+
+    }
 }
 
 module mountRims(isCutOut = false)
@@ -119,6 +133,7 @@ module hingePart(partWidth = 10, thicknes = 1, location = "left") {
     }
 }
 
+// The HandlePole is the pole that goes through the lawnmowers handle.
 module handlePole(screwThicknes = 4.9)
 {
     difference() 
@@ -132,4 +147,9 @@ module handlePole(screwThicknes = 4.9)
     
 }
 
-mainPart(isLeft = false);
+partPadding = 10;
+// Create the right part of the base
+//translate([0,baseMountWidth + partPadding,0]) mirror([0,1,0]) mainPart(isLeft = false);
+
+//color("green") 
+mainPart(isMale = false);
